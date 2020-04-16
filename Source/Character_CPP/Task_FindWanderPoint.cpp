@@ -9,6 +9,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Task_FindWanderPoint.h"
 
+static FName NAME_WanderPointKey("WanderPoint");
+
 EBTNodeResult::Type UTask_FindWanderPoint::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	ABotAIController* AIController = Cast<ABotAIController>(OwnerComp.GetAIOwner());
@@ -27,7 +29,7 @@ EBTNodeResult::Type UTask_FindWanderPoint::ExecuteTask(UBehaviorTreeComponent& O
 		return EBTNodeResult::Failed;
 	}
 
-	AAIWanderPoint* CurrentWanderPoint = Cast<AAIWanderPoint>(AIBlackboard->GetValueAsObject("WanderPoint"));
+	AAIWanderPoint* CurrentWanderPoint = Cast<AAIWanderPoint>(AIBlackboard->GetValueAsObject(NAME_WanderPointKey));
 	AAIWanderPoint* NewWanderPoint = CurrentWanderPoint;
 
 	while (NewWanderPoint == CurrentWanderPoint)
@@ -37,6 +39,6 @@ EBTNodeResult::Type UTask_FindWanderPoint::ExecuteTask(UBehaviorTreeComponent& O
 
 	}
 
-	AIBlackboard->SetValueAsObject("WanderPoint", NewWanderPoint);
+	AIBlackboard->SetValueAsObject(NAME_WanderPointKey, NewWanderPoint);
 	return EBTNodeResult::Succeeded;
 }

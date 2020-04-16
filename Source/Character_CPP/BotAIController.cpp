@@ -10,6 +10,9 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BotAIController.h"
 
+static FName NAME_ShouldWanderKey("ShouldWander");
+static FName NAME_EnemyKey("Enemy");
+
 ABotAIController::ABotAIController()
 {
 	PawnSensingComp = CreateDefaultSubobject<UPawnSensingComponent>(TEXT("PawnSensingComponent"));
@@ -26,7 +29,7 @@ void ABotAIController::OnPossess(APawn* InPawn)
 		BlackboardComp->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
 		BehaviorTreeComp->StartTree(*BehaviorTree);
 
-		BlackboardComp->SetValueAsBool(TEXT("ShouldWander"), true);
+		BlackboardComp->SetValueAsBool(NAME_ShouldWanderKey, true);
 	}
 
 
@@ -56,8 +59,8 @@ void ABotAIController::OnResume()
 	if (BlackboardComp)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("ABotAIController: Wandering..."));
-		BlackboardComp->SetValueAsObject("Enemy",nullptr);
-		BlackboardComp->SetValueAsBool("ShouldWander", true);
+		BlackboardComp->SetValueAsObject(NAME_EnemyKey,nullptr);
+		BlackboardComp->SetValueAsBool(NAME_ShouldWanderKey, true);
 	}
 }
 
@@ -66,8 +69,8 @@ void ABotAIController::OnSeePawn(APawn* SensedPawn)
 	if (BlackboardComp && SensedPawn)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("ABotAIController: I See You"));
-		BlackboardComp->SetValueAsObject("Enemy", SensedPawn);
-		BlackboardComp->SetValueAsBool("ShouldWander", false);
+		BlackboardComp->SetValueAsObject(NAME_EnemyKey, SensedPawn);
+		BlackboardComp->SetValueAsBool(NAME_ShouldWanderKey, false);
 		GetWorldTimerManager().ClearTimer(OnResumeTimerHandle);
 		GetWorldTimerManager().SetTimer(OnResumeTimerHandle, this, &ABotAIController::OnResume, 10.f, false, 1.f);
 	}
