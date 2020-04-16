@@ -1,7 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Engine/Engine.h"
+#include "TimerManager.h"
 #include "GameFramework/Pawn.h"
+#include "GameFramework/Actor.h"
 #include "Perception/PawnSensingComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
@@ -45,6 +47,18 @@ void ABotAIController::BeginPlay()
 	fScriptDelegate.BindUFunction(this, "OnSeePawn");
 	PawnSensingComp->OnSeePawn.AddUnique(fScriptDelegate);
 
+	GetWorldTimerManager().SetTimer(OnResumeTimerHandle, this, &ABotAIController::OnResume, 10.f, true, 1.f);
+
+}
+
+void ABotAIController::OnResume()
+{
+	if (BlackboardComp)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("ABotAIController: Wandering..."));
+		BlackboardComp->SetValueAsObject("Enemy",nullptr);
+		BlackboardComp->SetValueAsBool("ShouldWander", true);
+	}
 }
 
 void ABotAIController::OnSeePawn(APawn* SensedPawn)
@@ -54,5 +68,7 @@ void ABotAIController::OnSeePawn(APawn* SensedPawn)
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("ABotAIController: I See You"));
 		BlackboardComp->SetValueAsObject("Enemy", SensedPawn);
 		BlackboardComp->SetValueAsBool("ShouldWander", false);
+		GetWorldTimerManager().ClearTimer(OnResumeTimerHandle);
+		GetWorldTimerManager().SetTimer(OnResumeTimerHandle, this, &ABotAIController::OnResume, 10.f, false, 1.f);
 	}
 }

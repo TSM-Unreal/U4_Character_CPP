@@ -31,6 +31,9 @@ protected:
 
 	virtual void BeginPlay() override;
 
+	UFUNCTION()
+	void OnResume();
+
 	UPROPERTY(EditDefaultsOnly)
 	class UPawnSensingComponent* PawnSensingComp;
 
@@ -43,5 +46,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	class UBlackboardComponent* BlackboardComp;
 
+private:
+	FTimerHandle OnResumeTimerHandle;
 	
 };
