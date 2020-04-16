@@ -21,6 +21,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void PostInitializeComponents() override;
 
 public:	
 	// Called every frame
@@ -29,8 +30,19 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	UCameraComponent* Camera;
+	UPROPERTY(EditAnywhere)
+	UCameraComponent* Camera1;
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
 	USpringArmComponent* SpringArm;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Camera")
+	float SpringArmLengthMax = 300.f;
+	UPROPERTY(EditDefaultsOnly, Category = "Camera")
+	float SpringArmLengthMin = 0.f;
+
+	bool bInFirstPerson;
+
+	void ToggleView();
 
 	void MoveForward(float Value);
 	void MoveRight(float Value);
